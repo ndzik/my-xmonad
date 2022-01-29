@@ -41,9 +41,6 @@ import XMonad.Util.NamedScratchpad
       namedScratchpadManageHook,
       NamedScratchpad(NS) )
 
-pathToMainhs :: String
-pathToMainhs = "$HOME/projects/git/xmonad-config/app/Main.hs"
-
 main :: IO ()
 main = xmonad def
   { terminal    = "st"
