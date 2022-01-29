@@ -75,9 +75,9 @@ scratchpads =
   findSearch  = className =? "SEARCH"
   layoutSearch =
     doCenterFloat <+> customFloating (RationalRect 0 0 (2 / 3) (2 / 3))
-  spawnScratch  = "st -c SCRATCH -e env TERM=screen-256color tmux"
+  spawnScratch  = "st -c SCRATCH -e env TERM=screen-256color tmux new-session -s scratch"
   findScratch   = className =? "SCRATCH"
-  layoutScratch = customFloating (centeredRationalRect (1 / 4) (1 / 2))
+  layoutScratch = customFloating (centeredRationalRect (2 / 3) (1 / 2))
   spawnSound    = "pavucontrol"
   findSound     = className =? "Pavucontrol"
   layoutSound =
@@ -117,10 +117,7 @@ keyConf c = keyMap c `M.union` keys def c
     , ("M--"  , spawn "pamixer -d 5")
     , ("M-="  , spawn "pamixer --set-volume 100")
     , ("M-S-m", spawn "pamixer -t")
-    , ( "M-q"
-      , spawn
-        $ "cat " ++ pathToMainhs ++ "> $HOME/.xmonad/xmonad.hs && xmonad --recompile && xmonad --restart"
-      )
+    , ("M-q"  , spawn "xmonad --recompile && xmonad --restart")
     , ("M-x"  , namedScratchpadAction scratchpads "media")
     , ("M-s"  , namedScratchpadAction scratchpads "search")
     , ("M-S-g", namedScratchpadAction scratchpads "trade")
