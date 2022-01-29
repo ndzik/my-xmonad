@@ -1,0 +1,11 @@
+cabal-version: 2.2
+name:         xmonad-my
+version:      0.1
+
+executable xmonad
+  main-is: xmonad.hs
+  ghc-options: -Wall -fno-warn-missing-signatures
+  build-depends: base
+               , xmonad
+               , xmonad-contrib
+               , containers
