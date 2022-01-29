@@ -1,7 +1,5 @@
 #!/bin/bash
 
-d="$(dirname "$output")"
-
 cabal install xmonad-my:exe:xmonad \
     --enable-executable-stripping \
     --enable-optimization=2 \
