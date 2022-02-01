@@ -1,45 +1,59 @@
 module Main where
 
-import           Control.Monad               (filterM, when)
-import           Data.Functor                ((<&>))
-import qualified Data.Map                    as M
-import XMonad
-    ( mod4Mask,
-      gets,
-      runQuery,
-      spawn,
-      (|||),
-      xmonad,
-      (-->),
-      (<+>),
-      (=?),
-      className,
-      composeAll,
-      doFloat,
-      ButtonMask,
-      KeySym,
-      Default(def),
-      MonadState(get),
-      Layout,
-      Query,
-      WorkspaceId,
-      X,
-      XConfig(modMask, borderWidth, manageHook, workspaces, layoutHook,
-              terminal, keys),
-      XState(windowset),
-      Full(Full) )
-import           XMonad.Hooks.ManageHelpers  (Side (..), doCenterFloat,
-                                              doSideFloat, isDialog)
-import XMonad.Layout.ThreeColumns ( ThreeCol(ThreeColMid) )
-import XMonad.ManageHook ()
-import           XMonad.StackSet             (RationalRect (..), allWindows,
-                                              current, tag, workspace)
-import XMonad.Util.EZConfig ( mkKeymap )
-import XMonad.Util.NamedScratchpad
-    ( customFloating,
-      namedScratchpadAction,
-      namedScratchpadManageHook,
-      NamedScratchpad(NS) )
+import           Control.Monad                  ( filterM )
+import qualified Data.Map                      as M
+import           Prelude                 hiding ( pred )
+import           XMonad                         ( (-->)
+                                                , (<+>)
+                                                , (=?)
+                                                , ButtonMask
+                                                , Default(def)
+                                                , Full(Full)
+                                                , KeySym
+                                                , Layout
+                                                , MonadState(get)
+                                                , Query
+                                                , WorkspaceId
+                                                , X
+                                                , XConfig
+                                                  ( borderWidth
+                                                  , keys
+                                                  , layoutHook
+                                                  , manageHook
+                                                  , modMask
+                                                  , terminal
+                                                  , workspaces
+                                                  )
+                                                , XState(windowset)
+                                                , className
+                                                , composeAll
+                                                , doFloat
+                                                , gets
+                                                , mod4Mask
+                                                , runQuery
+                                                , spawn
+                                                , xmonad
+                                                , (|||)
+                                                )
+import           XMonad.Hooks.ManageHelpers     ( Side(..)
+                                                , doCenterFloat
+                                                , doSideFloat
+                                                , isDialog
+                                                )
+import           XMonad.Layout.ThreeColumns     ( ThreeCol(ThreeColMid) )
+import           XMonad.ManageHook              ( )
+import           XMonad.StackSet                ( RationalRect(..)
+                                                , allWindows
+                                                , current
+                                                , tag
+                                                , workspace
+                                                )
+import           XMonad.Util.EZConfig           ( mkKeymap )
+import           XMonad.Util.NamedScratchpad    ( NamedScratchpad(NS)
+                                                , customFloating
+                                                , namedScratchpadAction
+                                                , namedScratchpadManageHook
+                                                )
 
 main :: IO ()
 main = xmonad def
@@ -60,7 +74,7 @@ scratchpads =
   , NS "search" spawnSearch  findSearch  layoutSearch
   , NS "term"   spawnScratch findScratch layoutScratch
   , NS "sound"  spawnSound   findSound   layoutSound
-  , NS "trade" spawnTrade findTrade layoutTrade
+  , NS "trade"  spawnTrade   findTrade   layoutTrade
   ]
  where
   spawnMedia =
@@ -72,7 +86,8 @@ scratchpads =
   findSearch  = className =? "SEARCH"
   layoutSearch =
     doCenterFloat <+> customFloating (RationalRect 0 0 (2 / 3) (2 / 3))
-  spawnScratch  = "st -c SCRATCH -e env TERM=screen-256color tmux new-session -s scratch"
+  spawnScratch =
+    "st -c SCRATCH -e env TERM=screen-256color tmux new-session -s scratch"
   findScratch   = className =? "SCRATCH"
   layoutScratch = customFloating (centeredRationalRect (2 / 3) (1 / 2))
   spawnSound    = "pavucontrol"
@@ -107,21 +122,28 @@ keyConf c = keyMap c `M.union` keys def c
         , ("wrk", spawn "firefox -P work --class=\"work\"")
         ]
       )
-    , ("M-S-<Return>", doOnPredicate [(className =? "obs", spawn  "st -f \"VictorMono Nerd Font:pixelsize=20:antialias=true:autohint=true\"")
-                                     ,(elseDo, spawn $ terminal c)])
-    , ("M-d"  , spawn "firejail discord")
-    , ("M-+"  , spawn "pamixer -i 5")
-    , ("M--"  , spawn "pamixer -d 5")
-    , ("M-="  , spawn "pamixer --set-volume 100")
-    , ("M-S-m", spawn "pamixer -t")
-    , ("M-q"  , spawn "xmonad --recompile && xmonad --restart")
-    , ("M-x"  , namedScratchpadAction scratchpads "media")
-    , ("M-s"  , namedScratchpadAction scratchpads "search")
-    , ("M-S-g", namedScratchpadAction scratchpads "trade")
-    , ("M-u"  , namedScratchpadAction scratchpads "term")
-    , ("M-S-a", namedScratchpadAction scratchpads "sound")
+    , ( "M-S-<Return>"
+      , doOnPredicate
+        [ ( className =? "obs"
+          , spawn
+            "st -f \"VictorMono Nerd Font:pixelsize=20:antialias=true:autohint=true\""
+          )
+        , (elseDo, spawn $ terminal c)
+        ]
+      )
+    , ("M-d"                  , spawn "firejail discord")
+    , ("M-+"                  , spawn "pamixer -i 5")
+    , ("M--"                  , spawn "pamixer -d 5")
+    , ("M-="                  , spawn "pamixer --set-volume 100")
+    , ("M-S-m"                , spawn "pamixer -t")
+    , ("M-q"                  , spawn "xmonad --recompile && xmonad --restart")
+    , ("M-x"                  , namedScratchpadAction scratchpads "media")
+    , ("M-s"                  , namedScratchpadAction scratchpads "search")
+    , ("M-S-g"                , namedScratchpadAction scratchpads "trade")
+    , ("M-u"                  , namedScratchpadAction scratchpads "term")
+    , ("M-S-a"                , namedScratchpadAction scratchpads "sound")
     , ("XF86MonBrightnessDown", spawn "light -U 5")
-    , ("XF86MonBrightnessUp", spawn "light -A 5")
+    , ("XF86MonBrightnessUp"  , spawn "light -A 5")
     ]
 
 -- Conventience function.
@@ -142,8 +164,8 @@ doOnWorkspace preds = gets windowset >>= go preds . tag . workspace . current
 -- doOnPredicate receives a list of `(Query, Action)` tuples and applies the
 -- first matching action for which a `Query` returns `True`.
 doOnPredicate :: [(Query Bool, X ())] -> X ()
-doOnPredicate [] = return ()
-doOnPredicate ((pred, action):ps) = do
-      s <- get >>= \s -> return $ windowset s
-      filterAll <- filterM (runQuery pred) (allWindows s)
-      if filterAll /= [] then action else doOnPredicate ps
+doOnPredicate []                    = return ()
+doOnPredicate ((pred, action) : ps) = do
+  s         <- get >>= \s -> return $ windowset s
+  filterAll <- filterM (runQuery pred) (allWindows s)
+  if filterAll /= [] then action else doOnPredicate ps
