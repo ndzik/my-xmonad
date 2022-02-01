@@ -1,0 +1,22 @@
+cradle:
+  cabal:
+    - path: "./"
+      component: "xmonad"
+
+    - path: "xmonad/src"
+      component: "lib:xmonad"
+
+    - path: "xmonad/./Main.hs"
+      component: "xmonad:exe:xmonad"
+
+    - path: "xmonad/tests"
+      component: "xmonad:test:properties"
+
+    - path: "xmonad-contrib/./"
+      component: "lib:xmonad-contrib"
+
+    - path: "xmonad-contrib/tests"
+      component: "xmonad-contrib:test:tests"
+
+    - path: "xmonad-contrib/."
+      component: "xmonad-contrib:test:tests"
