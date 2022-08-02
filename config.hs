@@ -66,7 +66,7 @@ main =
   xmonad $
     ewmh $
       def
-        { terminal = "st",
+        { terminal = "alacritty",
           modMask = mod4Mask,
           borderWidth = 1,
           manageHook =
@@ -101,7 +101,7 @@ scratchpads =
     layoutSearch =
       doCenterFloat <+> customFloating (RationalRect 0 0 (2 / 3) (2 / 3))
     spawnScratch =
-      "st -c SCRATCH -e env TERM=screen-256color tmux new-session -s scratch"
+      "alacritty --class SCRATCH,SCRATCH -e env TERM=screen-256color tmux new-session -s scratch"
     findScratch = className =? "SCRATCH"
     layoutScratch = customFloating (centeredRationalRect (2 / 3) (1 / 2))
     spawnSound = "pavucontrol"
@@ -140,8 +140,7 @@ keyConf c = keyMap c `M.union` keys def c
           ( "M-S-<Return>",
             doOnPredicate
               [ ( className =? "obs",
-                  spawn
-                    "st -f \"VictorMono Nerd Font:pixelsize=20:antialias=true:autohint=true\""
+                  spawn "alacritty"
                 ),
                 (elseDo, spawn $ terminal c)
               ]
