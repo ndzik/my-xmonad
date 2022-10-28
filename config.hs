@@ -37,6 +37,7 @@ import XMonad
     (=?),
     (|||),
   )
+import XMonad.Hooks.BorderPerWindow
 import XMonad.Hooks.DynamicProperty
 import XMonad.Hooks.EwmhDesktops (ewmh)
 import XMonad.Hooks.ManageHelpers
@@ -62,24 +63,30 @@ import XMonad.Util.NamedScratchpad
 import Prelude hiding (pred)
 
 main :: IO ()
-main =
-  xmonad $
-    ewmh $
-      def
-        { terminal = "alacritty",
-          modMask = mod4Mask,
-          borderWidth = 1,
-          manageHook =
-            composeAll
-              [isDialog --> doFloat, namedScratchpadManageHook scratchpads],
-          workspaces = ["hme", "wrk", "3", "4", "5", "6", "7", "8", "9"],
-          layoutHook = customLayout,
-          -- Spotify annoyingly does not set its window property on startup but
-          -- rather later. This is why we have to listen for a dynamic property
-          -- change and catch this specifically for this application.
-          handleEventHook = dynamicPropertyChange "WM_NAME" (title =? "Spotify" --> customFloating (RationalRect 0 0 (1 / 4) (2 / 3))),
-          keys = keyConf
-        }
+main = xmonad . actionQueue . ewmh
+    $ def
+      { terminal = "alacritty",
+        modMask = mod4Mask,
+        borderWidth = 1,
+        manageHook =
+          composeAll
+            [ isDialog --> doFloat,
+              className =? "horture" --> (doFloat <+> defineBorderWidth 0),
+              namedScratchpadManageHook scratchpads
+            ],
+        workspaces = ["hme", "wrk", "3", "4", "5", "6", "7", "8", "9"],
+        layoutHook = customLayout,
+        -- Spotify annoyingly does not set its window property on startup but
+        -- rather later. This is why we have to listen for a dynamic property
+        -- change and catch this specifically for this application.
+        handleEventHook =
+          dynamicPropertyChange
+            "WM_NAME"
+            ( composeAll
+                [title =? "Spotify" --> customFloating (RationalRect 0 0 (1 / 4) (2 / 3))]
+            ),
+        keys = keyConf
+      }
   where
     customLayout = ThreeColMid 1 (3 / 100) (1 / 2) ||| Full
 
