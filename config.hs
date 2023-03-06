@@ -63,8 +63,9 @@ import XMonad.Util.NamedScratchpad
 import Prelude hiding (pred)
 
 main :: IO ()
-main = xmonad . actionQueue . ewmh
-    $ def
+main =
+  xmonad . actionQueue . ewmh $
+    def
       { terminal = "alacritty",
         modMask = mod4Mask,
         borderWidth = 1,
@@ -72,6 +73,7 @@ main = xmonad . actionQueue . ewmh
           composeAll
             [ isDialog --> doFloat,
               className =? "horture" --> (doFloat <+> defineBorderWidth 0),
+              className =? "mpv" --> (doFloat <+> customFloating (RationalRect 0 0 (1 / 2) (1 / 2))),
               namedScratchpadManageHook scratchpads
             ],
         workspaces = ["hme", "wrk", "3", "4", "5", "6", "7", "8", "9"],
@@ -96,9 +98,13 @@ scratchpads =
     NS "search" spawnSearch findSearch layoutSearch,
     NS "term" spawnScratch findScratch layoutScratch,
     NS "sound" spawnSound findSound layoutSound,
-    NS "trade" spawnTrade findTrade layoutTrade
+    NS "trade" spawnTrade findTrade layoutTrade,
+    NS "video" spawnVideo findVideo layoutVideo
   ]
   where
+    spawnVideo = "" -- We do not spawn anything. This is only for "mpv" windows to float.
+    findVideo = className =? "mpv"
+    layoutVideo = customFloating (RationalRect 0 0 (1 / 2) (1 / 2))
     spawnMedia = "spotify"
     findMedia = className =? "Spotify"
     layoutMedia =
@@ -163,6 +169,7 @@ keyConf c = keyMap c `M.union` keys def c
           ("M-S-g", namedScratchpadAction scratchpads "trade"),
           ("M-u", namedScratchpadAction scratchpads "term"),
           ("M-S-a", namedScratchpadAction scratchpads "sound"),
+          ("M-v", namedScratchpadAction scratchpads "video"),
           ("XF86MonBrightnessDown", spawn "light -U 5"),
           ("XF86MonBrightnessUp", spawn "light -A 5")
         ]
